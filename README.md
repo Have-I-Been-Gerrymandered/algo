@@ -1,6 +1,6 @@
 # HaveIBeenGerrymandered
 
-A online web tool for people to see how gerrymandered their representative district is
+A online web tool to show people how gerrymandered their representative district is
 
 
 The front end would be a website with a map of the US divided into representative districts. You would be able to zoom and click on a district and see a rating 1-100 on how likely/severely the district was gerrymandered relative to other US districts. Hopefully this score could be segmented into subcategories showing the user how well their district scored on various indicators for gerrymandering and provide a general view of what contributed to the final score. Historical electoral data could be gathered from publicly available data sets and regional polling data from news outlets can be used for more up to date results.
