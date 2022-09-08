@@ -18,6 +18,8 @@ Districts with a relatively slim margin of victory, no blowouts
 
 Irregularly shaped districts (might be hard to quantify)
 
+Number of "wasted" votes
+
 How seemly gerrymandered neighboring districts are
 
 
