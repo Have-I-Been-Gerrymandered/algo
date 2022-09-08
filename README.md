@@ -1,4 +1,4 @@
-# HaveIBeenGerrymandered
+# Have I Been Gerrymandered?
 
 A online web tool to show people how gerrymandered their representative district is
 
