@@ -12,15 +12,15 @@ I'd also like to provide a dialog box for participants to put search their distr
 Indicators of gerrmandering include but are not limited to:
 
 
-    Historical disparities between a states/group of districts' popular vote and electoral outcomes
+  - Historical disparities between a states/group of districts' popular vote and electoral outcomes
 
-    Districts with a relatively slim margin of victory, no blowouts
+  - Districts with a relatively slim margin of victory, no blowouts
 
-    Irregularly shaped districts (might be hard to quantify)
+  - Irregularly shaped districts (might be hard to quantify)
 
-    Number of "wasted" votes
+  - Number of "wasted" votes
 
-    How seemly gerrymandered neighboring districts are
+  - How seemly gerrymandered neighboring districts are
 
 
 There are plenty of available research papers on how to quantify gerrymandering. I would like to compile a number of these indicators in easy to use web tool.
