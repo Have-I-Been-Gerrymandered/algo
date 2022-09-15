@@ -17,6 +17,8 @@ with open(csv_filename, newline='') as csvfile:
     net_wasted_dem_votes = 0
     net_rep_votes = 0
     net_wasted_rep_votes = 0
+    dem_seats_won = 0
+    rep_seats_won = 0
 
     for row in spamreader:
         # Skip header
@@ -32,13 +34,32 @@ with open(csv_filename, newline='') as csvfile:
             # efficiency gap
             total_wasted_votes = abs(net_wasted_dem_votes - net_wasted_rep_votes)
             eff_gap = total_wasted_votes / net_votes
+
+            # The sign used with EG depends on whether the wasted votes favor the majority party(+) or not(-).
+            ideal_eff_gap = 0
+            
+            # Wasted votes favor majority party: Party has more wasted votes than their opponent but won fewer seats
+            if ((net_wasted_dem_votes >= net_wasted_rep_votes and dem_seats_won <= rep_seats_won) or 
+                (net_wasted_rep_votes >= net_wasted_dem_votes and rep_seats_won <= dem_seats_won)):
+                ideal_eff_gap = abs(((1 + eff_gap) / (1 + 0.1)) - 1)
+            # Wasted votes favor minority party
+            else:
+                ideal_eff_gap = abs(((1 - eff_gap) / (1 + 0.1)) - 1)
+
+            print("[ Election Results for " + county + " ]")
+            print("Dem votes: " + str(net_dem_votes) + " ... Wasted: " + str(net_wasted_dem_votes) + " ... Seats won: " + str(dem_seats_won))
+            print("Rep votes: " + str(net_rep_votes) + " ... Wasted: " + str(net_wasted_rep_votes) + " ... Seats won: " + str(rep_seats_won))
             print("Effiency Gap: " + str(round(eff_gap, 4)))
+            print("Ideal Efficiency Gap: " + str(round(ideal_eff_gap, 4)))
+            print("\n-------------------\n")
 
             net_votes = 0
             net_dem_votes = 0
             net_wasted_dem_votes = 0
             net_rep_votes = 0
             net_wasted_rep_votes = 0
+            dem_seats_won = 0
+            rep_seats_won = 0
             county = row[4]
 
         # Last row
@@ -79,8 +100,10 @@ with open(csv_filename, newline='') as csvfile:
 
             if (dem_votes > rep_votes):
                 winner = "D"
+                dem_seats_won += 1
             else:
                 winner = "R"
+                rep_seats_won += 1
 
             print("Total district votes: " + str(total_votes))
             print("Votes needed for majority: " + str(votes_for_majority))
