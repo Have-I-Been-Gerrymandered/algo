@@ -22,7 +22,7 @@ def readFile(count):
         for row in reader:
             
             if (count == 0 or row[2] in ("DEMOCRAT", "REPUBLICAN")):
-                lines.append((row[0], row[1], row[2], row[6], row[10], row[14], row[16]))
+                lines.append((row[0], row[1], row[2], row[5], row[6], row[10], row[11], row[14], row[16]))
 
             if (count % 1000 == 0):
                 print("Processed row: " + str(count))
