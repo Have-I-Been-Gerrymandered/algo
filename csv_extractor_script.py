@@ -2,7 +2,7 @@
 
 import csv
 
-csv_filename = ''
+csv_filename = 'real.csv'
 
 file = open(csv_filename, "r")
 total_lines = 0
