@@ -47,6 +47,7 @@ with open(csv_filename, newline="") as csvfile:
             continue
         if count == 1:
             county = row[4]
+            state = row[8]
             count = 2
 
         if row[4] != county:
@@ -82,7 +83,7 @@ with open(csv_filename, newline="") as csvfile:
             # print("\n-------------------\n")
 
             county_write = [
-                "[" + county + " COUNTY]",
+                "[" + county + " COUNTY, " + state + "]",
                 "",
                 "",
                 "",
@@ -176,6 +177,7 @@ with open(csv_filename, newline="") as csvfile:
 
             writer.writerow(current_row)
             current_row = ["R0", "R1", "R2", "R3", "R4", "R5", "R6"]
+            state = row[8]
 
             net_wasted_dem_votes += dem_wasted_votes
             net_wasted_rep_votes += rep_wasted_votes
