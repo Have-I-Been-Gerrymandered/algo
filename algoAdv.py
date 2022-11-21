@@ -3,11 +3,15 @@ from operator import attrgetter
 
 
 class District:
-    def __init__(self, districtNum):
+    def __init__(self, stateName, districtNum):
+        self.state = stateName
         self.num = districtNum
         self.dem = 0
         self.rep = 0
         self.effGap = 0
+
+    def getState(self):
+        return self.state
 
     def getNum(self):
         return self.num
@@ -96,13 +100,19 @@ class State:
         return self.districts[index]
 
     def addDistrict(self, newDisNum):
-        newDis = District(newDisNum)
+        newDis = District(self.name, newDisNum)
         self.districts.append(newDis)
 
     def getDisCount(self):
         return len(self.districts)
 
 
+
+def findPercentile(sortedList, districtCount, stateName, disNum):
+    for i in range(0, districtCount):
+        if sortedList[i].getState() == stateName and sortedList[i].getNum() == disNum:
+            return round( i*100/float(districtCount) , 4)
+    return -1
 
 
 
@@ -123,7 +133,7 @@ with open("2020HouseData.csv", "r") as csv_file:
                     # if new district
                     disIndex = states[i].getDisIndex(line[2])
                     if disIndex == -1:
-                        newDis = District(line[2])
+                        newDis = District(states[i].getName(), line[2])
                         # dem in new dis
                         if line[4] == "DEMOCRAT":
                             newDis.setDem(int(line[5]))
@@ -154,7 +164,7 @@ with open("2020HouseData.csv", "r") as csv_file:
                 newState = State(line[0], line[1])
                 states.append(newState)
                 # create new district for new state
-                newDis = District(line[2])
+                newDis = District(newState.getName(), line[2])
                 # dem in new dis
                 if line[4] == "DEMOCRAT":
                     newDis.setDem(int(line[5]))
@@ -202,10 +212,12 @@ with open('results.csv', 'w') as f:
             newLine[7] = states[i].getDis(j).demWasted()
             newLine[8] = states[i].getDis(j).repWasted()
             newLine[9] = states[i].getDis(j).getEffGap()
-            # newLine[10] = states[i].getDis(j).
-            # newLine[11] = states[i].getDis(j).
-            # newLine[12] = states[i].getDis(j).
+            newLine[10] = findPercentile(sortedDistricts, disCount, states[i].getName(), states[i].getDis(j).getNum())
+            newLine[11] = -1
+            newLine[12] = -1
+            newLine[13] = -1
+            newLine[14] = -1
             writer.writerow(newLine)
 
 for i in range(0, disCount):
-    print(sortedDistricts[i].getEffGap())
+    print(sortedDistricts[i].getState() + ' ' + sortedDistricts[i].getNum() + ' ----- ' +  str(sortedDistricts[i].getEffGap()))
