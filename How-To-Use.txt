@@ -1,7 +1,0 @@
-1. Open source CSV file with all election data (should be ~150 MB)
-2. Remove commas from source CSV file
-3. Run csv_extractor_script
-4. Open the condensed_results.csv file. 
-5. Sort this file by the COUNTY column, ascending A->Z.
-6. Run efficiency_gap_county_script
-7. CSV is in "results.csv"
