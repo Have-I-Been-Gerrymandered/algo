@@ -1,0 +1,4 @@
+Coding Standards
+- Naming Convention: camelCase
+- Documentation: Comment above each class explaining what it did, and further explain any confusing parts
+- Bracket Placement: Standard
