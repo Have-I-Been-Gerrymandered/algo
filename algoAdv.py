@@ -2,7 +2,8 @@ import csv
 import math
 from operator import attrgetter
 
-
+# Stores all district specifc data
+# Calculates eff gap and adv eff gap
 class District:
     def __init__(self, stateName, districtNum):
         self.state = stateName
@@ -14,11 +15,8 @@ class District:
         self.per = -1
         self.advPer = -1
 
-    def getState(self):
-        return self.state
 
-    def getNum(self):
-        return self.num
+    # setters
 
     def setDem(self, demVotes):
         self.dem = demVotes
@@ -31,6 +29,15 @@ class District:
 
     def setAdvPer(self, aP):
         self.advPer = aP
+
+
+    # getters
+
+    def getState(self):
+        return self.state
+
+    def getNum(self):
+        return self.num
 
     def getDem(self):
         return self.dem
@@ -54,6 +61,7 @@ class District:
             return 'DEMOCRAT'
 
 
+    # classical efficiency gap
 
     def demWasted(self):
         if self.getWinner() == 'DEMOCRAT':
@@ -73,6 +81,8 @@ class District:
     def getEffGap(self):
         return self.effGap
 
+
+    # improved efficiency gap
 
     def advDemWasted(self):
         period = (self.dem+self.rep)*0.05
@@ -156,8 +166,7 @@ class District:
         return self.advEffGap
 
 
-
-
+# store name of state and conntains list of district objects
 class State:
     def __init__(self, stateName, stateAppr):
         self.name = stateName
@@ -198,7 +207,7 @@ def findPercentile(sortedList, districtCount, stateName, disNum):
 
 
 
-
+# open data csv, read results and build DS with list of states which themselves contain districts
 states = []
 with open("2020HouseData.csv", "r") as csv_file:
     reader = csv.reader(csv_file)
@@ -281,7 +290,9 @@ advSortedDistricts.sort(key=attrgetter('advEffGap'))
 
 
 
-
+# open and write to results.csv
+# each row is a district
+# states in alphabetical order with districts in order of number
 with open('results.csv', 'w') as f:
     writer = csv.writer(f)
     writer.writerow(['State','District','Winner','Dem Votes','Rep Votes','Total Votes','Total Wasted','Dem Wasted', 'Rep Wasted', 'Eff Gap', 'Percentile', 'Adv Dem Wasted', 'Adv Rep Wasted', 'Adv Eff Gap', 'Adv Percentile'])
@@ -308,5 +319,6 @@ with open('results.csv', 'w') as f:
             newLine[14] = states[i].getDis(j).getAdvPer()
             writer.writerow(newLine)
 
+# print ordered districts with effGaps for debug purposes
 for i in range(0, disCount):
     print(advSortedDistricts[i].getState() + ' ' + advSortedDistricts[i].getNum() + ' ----- ' + str(advSortedDistricts[i].getEffGap()) + ' ----- ' + str(advSortedDistricts[i].getAdvEffGap()))
