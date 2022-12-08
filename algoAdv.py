@@ -1,4 +1,5 @@
 import csv
+import math
 from operator import attrgetter
 
 
@@ -9,6 +10,9 @@ class District:
         self.dem = 0
         self.rep = 0
         self.effGap = 0
+        self.advEffGap = 0
+        self.per = -1
+        self.advPer = -1
 
     def getState(self):
         return self.state
@@ -22,11 +26,23 @@ class District:
     def setRep(self, repVotes):
         self.rep = repVotes
 
+    def setPer(self, p):
+        self.per = p
+
+    def setAdvPer(self, aP):
+        self.advPer = aP
+
     def getDem(self):
         return self.dem
 
     def getRep(self):
         return self.rep
+
+    def getPer(self):
+        return self.per
+
+    def getAdvPer(self):
+        return self.advPer
 
     def getTotal(self):
         return self.dem + self.rep
@@ -59,20 +75,86 @@ class District:
 
 
     def advDemWasted(self):
+        period = (self.dem+self.rep)*0.05
         if self.getWinner() == 'DEMOCRAT':
-            return self.dem - int((self.dem+self.rep)/2) - 1
+            surplus = self.dem-( (self.dem+self.rep)/2.0 + 1)
+            periodCount = surplus/period            # how many 5% increments of surplus dem win by
+            remainder = periodCount%1
+            periodCount = math.floor(periodCount)
+            return math.floor( ((periodCount+1)/9.0)*remainder*period + ((periodCount/9)/2)*periodCount*period )
+
         else:
-            return self.dem
+            periodFlout = self.dem/period
+            periodCount = math.floor(periodFlout)
+            # tau values for remainder votes (smaller than 5% slices)
+            if periodCount == 10:   # exactly 50%
+                return math.floor(0.00*periodFlout*period)
+            elif periodCount == 9:
+                return math.floor(0.05*periodFlout*period)
+            elif periodCount == 8:
+                return math.floor(0.2*periodFlout*period)
+            elif periodCount == 7:
+                return math.floor(0.5*periodFlout*period)
+            elif periodCount == 6:
+                return math.floor(0.85*periodFlout*period)
+            elif periodCount == 5:
+                return math.floor(0.7*periodFlout*period)
+            elif periodCount == 4:
+                return math.floor(0.55*periodFlout*period)
+            elif periodCount == 3:
+                return math.floor(0.4*periodFlout*period)
+            elif periodCount == 2:
+                return math.floor(0.25*periodFlout*period)
+            elif periodCount == 1:
+                return math.floor(0.15*periodFlout*period)
+            else:   # periodCount == 0
+                return math.floor(0.1*periodFlout*period)
+
+
 
     def advRepWasted(self):
+        period = (self.dem+self.rep)*0.05
         if self.getWinner() == 'REPUBLICAN':
-            return self.rep - int((self.rep+self.dem)/2) - 1
+            surplus = self.rep-( (self.dem+self.rep)/2.0 + 1)
+            periodCount = surplus/period            # how many 5% increments of surplus rep win by
+            remainder = periodCount%1
+            periodCount = math.floor(periodCount)
+            return math.floor( ((periodCount+1)/9.0)*remainder*period + ((periodCount/9)/2)*periodCount*period )
+
         else:
-            return self.rep
+            periodFlout = self.rep/period
+            periodCount = math.floor(periodFlout)
+            # tau values for remainder votes (smaller than 5% slices)
+            if periodCount == 10:   # exactly 50%
+                return math.floor(0.00*periodFlout*period)
+            elif periodCount == 9:
+                return math.floor(0.05*periodFlout*period)
+            elif periodCount == 8:
+                return math.floor(0.2*periodFlout*period)
+            elif periodCount == 7:
+                return math.floor(0.5*periodFlout*period)
+            elif periodCount == 6:
+                return math.floor(0.85*periodFlout*period)
+            elif periodCount == 5:
+                return math.floor(0.7*periodFlout*period)
+            elif periodCount == 4:
+                return math.floor(0.55*periodFlout*period)
+            elif periodCount == 3:
+                return math.floor(0.4*periodFlout*period)
+            elif periodCount == 2:
+                return math.floor(0.25*periodFlout*period)
+            elif periodCount == 1:
+                return math.floor(0.15*periodFlout*period)
+            else:   # periodCount == 0
+                return math.floor(0.1*periodFlout*period)
 
 
-    def advEffGap(self):
-        return -1
+    def calcAdvEffGap(self):
+        self.advEffGap = round(100*abs(self.advDemWasted()-self.advRepWasted()) / float(self.getTotal()) , 4)
+
+    def getAdvEffGap(self):
+        return self.advEffGap
+
 
 
 
@@ -107,7 +189,7 @@ class State:
         return len(self.districts)
 
 
-
+# take state and district name and return its percentile rank in the sorted list
 def findPercentile(sortedList, districtCount, stateName, disNum):
     for i in range(0, districtCount):
         if sortedList[i].getState() == stateName and sortedList[i].getNum() == disNum:
@@ -184,12 +266,17 @@ for i in range(0, len(states)):
 
 # calc eff gap and make presorted district list
 sortedDistricts = []
+advSortedDistricts = []
 for i in range (0, len(states)):
     for j in range(0, states[i].getDisCount()):
+        # states[i].getDis(j).calcEffGap()
         states[i].getDis(j).calcEffGap()
+        states[i].getDis(j).calcAdvEffGap()
         sortedDistricts.append(states[i].getDis(j))
+        advSortedDistricts.append(states[i].getDis(j))
 # sort list of districts
 sortedDistricts.sort(key=attrgetter('effGap'))
+advSortedDistricts.sort(key=attrgetter('advEffGap'))
 
 
 
@@ -212,12 +299,14 @@ with open('results.csv', 'w') as f:
             newLine[7] = states[i].getDis(j).demWasted()
             newLine[8] = states[i].getDis(j).repWasted()
             newLine[9] = states[i].getDis(j).getEffGap()
-            newLine[10] = findPercentile(sortedDistricts, disCount, states[i].getName(), states[i].getDis(j).getNum())
-            newLine[11] = -1
-            newLine[12] = -1
-            newLine[13] = -1
-            newLine[14] = -1
+            states[i].getDis(j).setPer( findPercentile(sortedDistricts, disCount, states[i].getName(), states[i].getDis(j).getNum()) )
+            newLine[10] = states[i].getDis(j).getPer()
+            newLine[11] = states[i].getDis(j).advDemWasted()
+            newLine[12] = states[i].getDis(j).advRepWasted()
+            newLine[13] = states[i].getDis(j).getAdvEffGap()
+            states[i].getDis(j).setAdvPer( findPercentile(advSortedDistricts, disCount, states[i].getName(), states[i].getDis(j).getNum()) )
+            newLine[14] = states[i].getDis(j).getAdvPer()
             writer.writerow(newLine)
 
 for i in range(0, disCount):
-    print(sortedDistricts[i].getState() + ' ' + sortedDistricts[i].getNum() + ' ----- ' +  str(sortedDistricts[i].getEffGap()))
+    print(advSortedDistricts[i].getState() + ' ' + advSortedDistricts[i].getNum() + ' ----- ' + str(advSortedDistricts[i].getEffGap()) + ' ----- ' + str(advSortedDistricts[i].getAdvEffGap()))
